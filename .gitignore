@@ -1,0 +1,7 @@
+# Backup files
+*~
+*.bkp
+.*.swp
+
+# My dev files
+*.dev
