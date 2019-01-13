@@ -28,7 +28,7 @@ Although you should have the following packages installed:
 Just use do: `git clone https://github.com/DeaDSouL/AutoLinux.git`
 
 ### Usage
-`al.sysadmin-env help`
-`al.vim-env help`
-`al.docker help`
-`al.docker-emby help`
+`./al.sysadmin-env help`
+`./al.vim-env help`
+`./al.docker help`
+`./al.docker-emby help`
