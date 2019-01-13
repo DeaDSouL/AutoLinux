@@ -1,0 +1,54 @@
+#!/bin/env bash
+
+. al.config
+
+function init_install() {
+    [[ ! -e "${AL_GIT_REPOS_PATH}" ]] && mkdir -p "${AL_GIT_REPOS_PATH}"
+    # ----------------------------------------------------------------
+    cd "${AL_GIT_REPOS_PATH}"
+    git clone https://github.com/DeaDSouL/vimConfig.git
+    # ----------------------------------------------------------------
+    cd "${HOME}"
+    ln -s "${AL_GIT_REPOS_PATH}/vimConfig/vimrc" .vimrc
+    ln -s "${AL_GIT_REPOS_PATH}/vimConfig/vim" .vim
+    # ----------------------------------------------------------------
+    mkdir -p "${HOME}"/.vim/{plugged,files/{bkp,swap,undo}}
+    # ----------------------------------------------------------------
+    echo 'Will run vim, now.'; sleep 2
+    echo 'Hit: ,U'; sleep 3
+    echo '     and wait till the pluggins is updated'; sleep 3
+    echo 'Then hit: ,u'; sleep 4
+    # ----------------------------------------------------------------
+    vim
+}
+
+function init_remove() {
+    [[ -e "${HOME}/.vim" ]] && rm -fv "${HOME}/.vim"
+    [[ -e "${HOME}/.vimrc" ]] && rm -fv "${HOME}/.vimrc"
+}
+
+function init_purge() {
+    init_remove "$1"
+    [[ -d "${AL_GIT_REPOS_PATH}/vimConfig" ]] && rm -rfv "${AL_GIT_REPOS_PATH}/vimConfig"
+}
+
+function init_showUsage() {
+    echo -e "\nUSAGE: $0 help|install|remove|purge\n
+    help\tShows this menu.
+    install\tInstalls vimConfig.
+    remove\tRemoves '.vim' & '.vimrc' links.
+    purge\tRemove vimConfig.\n"
+}
+
+function init_main() {
+    case "$1" in
+        install)    init_install "$2"               ;;
+        remove)     init_remove "$2"                ;;
+        purge)      init_purge "$2"                 ;;
+        help)       init_showUsage                  ;;
+        *)          echo "[ERROR]: Try: $0 help"    ;;
+    esac
+}
+
+chmod u+x "$0"
+init_main "$1" "$2"

@@ -1,0 +1,39 @@
+#!/bin/env bash
+
+. al.config
+
+function init_install() {
+    yum -y update
+    yum -y install vim tmux git rsync
+}
+
+function init_remove() {
+    yum -y update
+    yum -y remove vim tmux git rsync
+}
+
+function init_purge() {
+    init_remove "$1"
+    yum -y autoremove
+}
+
+function init_showUsage() {
+    echo -e "\nUSAGE: $0 help|install|remove|purge\n
+    help\tShows this menu.
+    install\tInstalls sysAdmin' environment.
+    remove\tRemoves sysAdmin' environment.
+    purge\tRemove sysAdmin' environment & its needed packages.\n"
+}
+
+function init_main() {
+    case "$1" in
+        install)    init_install "$2"               ;;
+        remove)     init_remove "$2"                ;;
+        purge)      init_purge "$2"                 ;;
+        help)       init_showUsage                  ;;
+        *)          echo "[ERROR]: Try: $0 help"    ;;
+    esac
+}
+
+chmod u+x "$0"
+init_main "$1" "$2"

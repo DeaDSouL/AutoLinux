@@ -1,0 +1,74 @@
+#!/bin/env bash
+
+. al.config
+
+# based on: https://docs.docker.com/install/linux/docker-ce/centos/
+function init_install() {
+    yum -y update
+    yum -y install yum-utils device-mapper-persistent-data lvm2 rsync
+    # ----------------------------------------------------------------
+    yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum -y update
+    # ----------------------------------------------------------------
+    yum -y install docker-ce
+    # ----------------------------------------------------------------
+    [[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
+    [[ ! -e "${AL_CONFIG_PATH}" ]] && mkdir "${AL_CONFIG_PATH}"
+    [[ -e "${AL_DOCKER_ALIAS}" ]] && mv "${AL_DOCKER_ALIAS}" "${AL_DOCKER_ALIAS}.${AL_DATETIME}"
+    # ----------------------------------------------------------------
+    echo -e "alias d.stat='docker stats'" > "${AL_DOCKER_ALIAS}"
+    echo -e "\n[[ -e '${AL_DOCKER_ALIAS}' ]] && . '${AL_DOCKER_ALIAS}'\n" >> "${AL_BASHRC}"
+    # ----------------------------------------------------------------
+    . "${AL_BASHRC}"
+    # ----------------------------------------------------------------
+    systemctl enable docker
+    systemctl start docker
+}
+
+function init_remove() {
+    systemctl stop docker
+    systemctl disable docker
+    # ----------------------------------------------------------------
+    yum -y remove docker-ce
+    yum -y autoremove
+    # ----------------------------------------------------------------
+    grepString="\[\[ -e '${AL_DOCKER_ALIAS}' \]\] \&\& \. '${AL_DOCKER_ALIAS}'"
+    $(grep "${grepString}" "${AL_BASHRC}" >/dev/null)
+    # ----------------------------------------------------------------
+    if [[ $? == 0 ]]; then
+        sedString="${grepString//\//\/}"
+        sed -i "/${sedString}/d" "${AL_BASHRC}"
+    fi
+    # ----------------------------------------------------------------
+    . "${AL_BASHRC}"
+}
+
+function init_purge() {
+    init_remove "$1"
+    # ----------------------------------------------------------------
+    dPaths=(AL_DOCKER_SYS_PATH AL_DOCKER_ENG_PATH AL_DOCKER_ALIAS AL_DOCKER_VOLUMES_PATH AL_DOCKER_CONTAINERS_PATH AL_DOCKER_PATH)
+    for ddir in ${dPaths[@]}; do
+        [[ -e "${!ddir}" ]] && rm -rfv "${!ddir}"
+    done
+}
+
+function init_showUsage() {
+    echo -e "\nUSAGE: $0 help|install|remove|purge\n
+    help\tShows this menu.
+    install\tInstalls docker.
+    remove\tRemoves docker.
+    purge\tRemove docker and the created directories & files.\n"
+}
+
+function init_main() {
+    case "$1" in
+        install)    init_install "$2"               ;;
+        remove)     init_remove "$2"                ;;
+        purge)      init_purge "$2"                 ;;
+        help)       init_showUsage                  ;;
+        *)          echo "[ERROR]: Try: $0 help"    ;;
+    esac
+}
+
+chmod u+x "$0"
+init_main "$1" "$2"
