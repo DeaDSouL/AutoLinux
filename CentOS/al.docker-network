@@ -1,0 +1,63 @@
+#!/bin/env bash
+
+. al.config
+
+[[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
+
+function init_install() {
+    docker network inspect "${AL_DOCKER_NETWORK_NAME}" &>/dev/null
+    if [[ $? == 0 ]]; then
+        echo "[ERROR]: network:${AL_DOCKER_NETWORK_NAME} is already created!"
+        exit 1
+    fi
+
+    _DOCKER_NETWORK_OPTIONS=''
+    for _opt in ${AL_DOCKER_NETWORK_OPTIONS[@]}; do
+        _DOCKER_NETWORK_OPTIONS="${_DOCKER_NETWORK_OPTIONS}-o ${_opt} "
+    done
+
+    docker network create --driver "${AL_DOCKER_NETWORK_DRIVER}" \
+        --gateway "${AL_DOCKER_NETWORK_GATEWAY}" \
+        --subnet "${AL_DOCKER_NETWORK_SUBNET}" \
+        --ip-range "${AL_DOCKER_NETWORK_IPRANGE}" \
+        ${_DOCKER_NETWORK_OPTIONS} ${AL_DOCKER_NETWORK_NAME}
+
+}
+
+function init_remove() {
+    docker network rm "${AL_DOCKER_NETWORK_NAME}" 2>/dev/null
+    if [[ $? != 0 ]]; then
+        echo -e "ERROR: Can not remove '${AL_DOCKER_NETWORK_NAME}'! \nBecause the following containers are using it:"
+        docker inspect $(docker network inspect -f '{{ range $key, $value := .Containers }}{{ printf "%s\n" $key }}{{ end }}' "${AL_DOCKER_NETWORK_NAME}") --format '{{ .Name }}' | cut -c2-
+        echo -e "Try:\n  docker network disconnect ${AL_DOCKER_NETWORK_NAME} CONTAINER-NAME"
+        echo "Or, use: $0 purge"
+    fi
+}
+
+function init_purge() {
+    for _CONTAINER in $(docker inspect $(docker network inspect -f '{{ range $key, $value := .Containers }}{{ printf "%s\n" $key }}{{ end }}' "${AL_DOCKER_NETWORK_NAME}") --format '{{ .Name }}' | cut -c2-); do
+        docker network disconnect "${AL_DOCKER_NETWORK_NAME}" "${_CONTAINER}"
+    done
+    init_remove
+}
+
+function init_showUsage() {
+    echo -e "\nUSAGE: $0 help|install|remove|purge\n
+    help\tShows this menu.
+    install\tCreates a macvlan bridge to the physical network (${AL_DOCKER_NETWORK_NAME}).
+    remove\tRemoves the macvlan network (${AL_DOCKER_NETWORK_NAME}).
+    purge\tDisconnect all containers from (${AL_DOCKER_NETWORK_NAME}) then, removes it.\n"
+}
+
+function init_main() {
+    case "$1" in
+        install)    init_install "$2"               ;;
+        remove)     init_remove "$2"                ;;
+        purge)      init_purge "$2"                 ;;
+        help)       init_showUsage                  ;;
+        *)          echo "[ERROR]: Try: $0 help"    ;;
+    esac
+}
+
+chmod u+x "$0"
+init_main "$1" "$2"
