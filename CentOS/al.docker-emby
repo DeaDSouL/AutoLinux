@@ -11,12 +11,6 @@ function init_install() {
         exit 1
     fi
     # ----------------------------------------------------------------
-    rsync -avhPAe ssh ${AL_DOCKER_EMBY_REMOTE_SRC_USER}@${AL_DOCKER_EMBY_REMOTE_SRC_IP}:"${AL_DOCKER_EMBY_REMOTE_SRC_PATH}" "${AL_DOCKER_VOLUMES_PATH}/"
-    # ----------------------------------------------------------------
-    [[ -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]] && rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
-    mv -v "${AL_DOCKER_VOLUMES_PATH}/emby" "${AL_DOCKER_EMBY_CONFIG_PATH}"
-    chown -R 1000:100 "${AL_DOCKER_EMBY_CONFIG_PATH}"
-    # ----------------------------------------------------------------
     docker pull emby/embyserver:latest
     # ----------------------------------------------------------------
     # Original: https://hub.docker.com/r/emby/embyserver/
@@ -57,9 +51,7 @@ function init_purge() {
     init_remove
     # ----------------------------------------------------------------
     docker rmi emby/embyserver:latest
-    docker network rm "${AL_DOCKER_EMBY_NETWORK_NAME}"
-    rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
-    rm -f "${AL_DOCKER_PATH}/${AL_DOCKER_EMBY_FILENAME}"
+    [[ -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]] && rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
 }
 
 function init_showUsage() {

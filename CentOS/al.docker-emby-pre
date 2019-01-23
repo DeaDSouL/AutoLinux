@@ -1,0 +1,42 @@
+#!/bin/env bash
+
+. al.config
+
+[[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
+
+function init_install() {
+    [[ -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]] && rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
+    rsync -avhPAe ssh ${AL_DOCKER_EMBY_REMOTE_USER}@${AL_DOCKER_EMBY_REMOTE_IP}:"${AL_DOCKER_EMBY_REMOTE_PATH}" "${AL_DOCKER_VOLUMES_PATH}/"
+    # ----------------------------------------------------------------
+    mv -v "${AL_DOCKER_VOLUMES_PATH}/emby" "${AL_DOCKER_EMBY_CONFIG_PATH}"
+    chown -R 1000:100 "${AL_DOCKER_EMBY_CONFIG_PATH}"
+}
+
+function init_remove() {
+    [[ -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]] && rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
+}
+
+function init_purge() {
+    init_remove
+}
+
+function init_showUsage() {
+    echo -e "\nUSAGE: $0 help|install|remove|purge\n
+    help\tShows this menu.
+    install\tGet our remote emby-config.
+    remove\tRemoves emby-config.
+    purge\tAn alias to 'remove'.\n"
+}
+
+function init_main() {
+    case "$1" in
+        install)    init_install "$2"               ;;
+        remove)     init_remove "$2"                ;;
+        purge)      init_purge "$2"                 ;;
+        help)       init_showUsage                  ;;
+        *)          echo "[ERROR]: Try: $0 help"    ;;
+    esac
+}
+
+chmod u+x "$0"
+init_main "$1" "$2"
