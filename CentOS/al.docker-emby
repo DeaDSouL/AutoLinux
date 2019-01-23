@@ -5,7 +5,7 @@
 [[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
 
 function init_install() {
-    docker ps -a | grep "emby/embyserver:latest.*${AL_DOCKER_EMBY_CONTAINER_NAME}$" >/dev/null
+    docker ps -a | grep "emby/embyserver:latest.*${AL_DOCKER_EMBY_NAME}$" >/dev/null
     if [[ $? == 0 ]]; then
         echo "[ERROR]: container:emby is already installed!"
         exit 1
@@ -18,14 +18,6 @@ function init_install() {
     chown -R 1000:100 "${AL_DOCKER_EMBY_CONFIG_PATH}"
     # ----------------------------------------------------------------
     docker pull emby/embyserver:latest
-    docker network create --subnet=${AL_DOCKER_EMBY_NETWORK_SUBNET} "${AL_DOCKER_EMBY_NETWORK_NAME}"
-    #docker network create -d ${AL_DOCKER_EMBY_NETWORK_DRIVER} --subnet=${AL_DOCKER_EMBY_NETWORK_SUBNET} --gateway=${AL_DOCKER_EMBY_NETWORK_GATEWAY} -o parent=${AL_DOCKER_EMBY_NETWORK_IFACE} "${AL_DOCKER_EMBY_NETWORK_NAME}"
-    #docker network create \
-    #    -d ${AL_DOCKER_EMBY_NETWORK_DRIVER} \
-    #    --subnet=${AL_DOCKER_EMBY_NETWORK_SUBNET} \
-    #    --gateway=${AL_DOCKER_EMBY_NETWORK_GATEWAY} \
-    #    -o parent=${AL_DOCKER_EMBY_NETWORK_IFACE} \
-    #    "${AL_DOCKER_EMBY_NETWORK_NAME}"
     # ----------------------------------------------------------------
     # Original: https://hub.docker.com/r/emby/embyserver/
     #
@@ -41,16 +33,16 @@ function init_install() {
     #    --env GIDLIST=100 \ # A comma-separated list of additional GIDs to run emby as (default: 2)
     #    emby/embyserver:latest
     docker run -d \
-        --net ${AL_DOCKER_EMBY_NETWORK_NAME} \
-        --ip ${AL_DOCKER_EMBY_CONTAINER_IP} \
+        --net ${AL_DOCKER_EMBY_NETWORK} \
+        --ip ${AL_DOCKER_EMBY_IP} \
         --volume ${AL_DOCKER_EMBY_CONFIG_PATH}:/config \
         --publish 8096:8096 \
         --publish 8920:8920 \
         --env UID=1000 \
         --env GID=100 \
         --env GIDLIST=100,39 \
-        --restart unless-stopped \
-        --name ${AL_DOCKER_EMBY_CONTAINER_NAME} \
+        --restart ${AL_DOCKER_EMBY_RESTART} \
+        --name ${AL_DOCKER_EMBY_NAME} \
         emby/embyserver:latest
     # ----------------------------------------------------------------
     docker ps -a
