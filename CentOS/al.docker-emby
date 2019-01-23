@@ -11,6 +11,11 @@ function init_install() {
         exit 1
     fi
     # ----------------------------------------------------------------
+    if [[ ! -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]]; then
+        mkdir -p "${AL_DOCKER_EMBY_CONFIG_PATH}"
+        chown -R 1000:1000 "${AL_DOCKER_EMBY_CONFIG_PATH}"
+    fi
+    # ----------------------------------------------------------------
     docker pull emby/embyserver:latest
     # ----------------------------------------------------------------
     # Original: https://hub.docker.com/r/emby/embyserver/
