@@ -33,7 +33,7 @@ VBoxManage showvminfo "VM_NAME" | grep "IDE"
 
 &nbsp;&nbsp;&nbsp;&nbsp;If you didn't find it, you can add it:
 
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 VBoxManage storagectl "VM_NAME" --name "IDE controller" --add ide
 ```
 
