@@ -51,8 +51,8 @@ function init_install() {
 }
 
 function init_remove() {
-    docker stop ${AL_DOCKER_EMBY_CONTAINER_NAME}
-    docker rm ${AL_DOCKER_EMBY_CONTAINER_NAME}
+    docker stop ${AL_DOCKER_EMBY_NAME}
+    docker rm ${AL_DOCKER_EMBY_NAME}
 }
 
 function init_purge() {
