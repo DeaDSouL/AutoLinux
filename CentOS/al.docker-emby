@@ -16,7 +16,7 @@ function init_install() {
         chown -R 1000:1000 "${AL_DOCKER_EMBY_CONFIG_PATH}"
     fi
     # ----------------------------------------------------------------
-    docker pull emby/embyserver:latest
+    docker pull ${AL_DOCKER_EMBY_REPO_VER}
     # ----------------------------------------------------------------
     # Original: https://hub.docker.com/r/emby/embyserver/
     #
@@ -32,17 +32,20 @@ function init_install() {
     #    --env GIDLIST=100 \ # A comma-separated list of additional GIDs to run emby as (default: 2)
     #    emby/embyserver:latest
     docker run -d \
-        --net ${AL_DOCKER_EMBY_NETWORK} \
+        --network ${AL_DOCKER_EMBY_NETWORK} \
         --ip ${AL_DOCKER_EMBY_IP} \
+        --hostname "${AL_DOCKER_EMBY_HOSTNAME}" \
+        --mac-address "${AL_DOCKER_EMBY_MAC}" \
         --volume ${AL_DOCKER_EMBY_CONFIG_PATH}:/config \
+        --volume ${AL_DOCKER_EMBY_VOLUME1} \
         --publish 8096:8096 \
         --publish 8920:8920 \
-        --env UID=1000 \
-        --env GID=100 \
-        --env GIDLIST=100,39 \
+        --env UID=${AL_DOCKER_EMBY_UID} \
+        --env GID=${AL_DOCKER_EMBY_GID} \
+        --env GIDLIST=${AL_DOCKER_EMBY_GIDLIST} \
         --restart ${AL_DOCKER_EMBY_RESTART} \
         --name ${AL_DOCKER_EMBY_NAME} \
-        emby/embyserver:latest
+        ${AL_DOCKER_EMBY_OPTIONS[@]} ${AL_DOCKER_EMBY_REPO_VER} sh
     # ----------------------------------------------------------------
     docker ps -a
 }
