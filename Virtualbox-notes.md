@@ -30,11 +30,12 @@ To find the port and device numbers of the IDE controller: (#port, #device)
 ```
 VBoxManage showvminfo "VM_NAME" | grep "IDE"
 ```
+
     If you didn't find it, you can add it:
 
-    ```
-    VBoxManage storagectl "VM_NAME" --name "IDE controller" --add ide
-    ```
+```
+VBoxManage storagectl "VM_NAME" --name "IDE controller" --add ide
+```
 
 To attach the VBoxGuestAdditions.iso as dvd drive:
 
@@ -44,15 +45,15 @@ VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type
 
     To find where is VBoxGuestAdditions.iso:
 
-    ```
-    find / -path /mnt -prune -o -name 'VBoxGuestAdditions*.iso'
-    ```
+```
+find / -path /mnt -prune -o -name 'VBoxGuestAdditions*.iso'
+```
 
     If you have the virtualbox-guestadditions packages installed on your host, then you can alternatively try:
 
-    ```
-    VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium additions
-    ```
+```
+VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium additions
+```
 
 To detach the VBoxGuestAdditions.iso:
 
@@ -62,9 +63,9 @@ VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type
 
     If that didn't work, just force it:
 
-    ```
-    VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive --forceunmount
-    ```
+```
+VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive --forceunmount
+```
 
 ### On Guest:
 
