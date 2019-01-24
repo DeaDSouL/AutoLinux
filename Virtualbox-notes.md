@@ -32,6 +32,7 @@ VBoxManage showvminfo "VM_NAME" | grep "IDE"
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;If you didn't find it, you can add it:
+
 ```
 VBoxManage storagectl "VM_NAME" --name "IDE controller" --add ide
 ```
@@ -44,13 +45,13 @@ VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type
 
 &nbsp;&nbsp;&nbsp;&nbsp;To find where is VBoxGuestAdditions.iso:
 
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 find / -path /mnt -prune -o -name 'VBoxGuestAdditions*.iso'
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;If you have the virtualbox-guestadditions packages installed on your host, then you can alternatively try:
 
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium additions
 ```
 
@@ -62,7 +63,7 @@ VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type
 
 &nbsp;&nbsp;&nbsp;&nbsp;If that didn't work, just force it:
 
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive --forceunmount
 ```
 
