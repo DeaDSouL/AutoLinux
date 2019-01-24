@@ -43,7 +43,7 @@ To attach the VBoxGuestAdditions.iso as dvd drive:
 VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium /PATH/TO/VBoxGuestAdditions.iso
 ```
 
-&nbsp;&nbsp;&nbsp;&nbsp;To find where is VBoxGuestAdditions.iso:
+&nbsp;&nbsp;&nbsp;&nbsp;To find out where is VBoxGuestAdditions.iso:
 
 ```
 find / -path /mnt -prune -o -name 'VBoxGuestAdditions*.iso'
