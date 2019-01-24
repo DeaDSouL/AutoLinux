@@ -58,7 +58,7 @@ function init_remove() {
 function init_purge() {
     init_remove
     # ----------------------------------------------------------------
-    docker rmi emby/embyserver:latest
+    docker rmi ${AL_DOCKER_EMBY_REPO_VER}
     [[ -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]] && rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
 }
 
