@@ -7,40 +7,51 @@ Some useful notes, if you're planning to use docker in virtualbox.
 
 ### On Host:
 
+Assuming:
+* The **VM NAME** is `CentOS-Docker`.
+* The **shared folder** called `Media-Data`.
+* The **shared folder path** is `/srv/Media`.
+
 To add a shared folder:
 
 ```
-VBoxManage sharedfolder add "VM_NAME" --name NAME_OF_SHARED_FOLDER --hostpath "PATH/TO/DIR/ON/HOST"
+VBoxManage sharedfolder add "CentOS-Docker" --name "Media-Data" --hostpath "/srv/Media"
 ```
 
 To remove a shared folder:
 
 ```
-VBoxManage sharedfolder remove "VM_NAME" --name NAME_OF_SHARED_FOLDER
+VBoxManage sharedfolder remove "CentOS-Docker" --name "Media-Data"
 ```
 
 To find the IDE Controller device numbers:
 
 ```
-VBoxManage showvminfo "VM_NAME" | grep "Storage Controller Name"
+VBoxManage showvminfo "CentOS-Docker" | grep "Storage Controller Name"
 ```
 
 To find the port and device numbers of the IDE controller: (#port, #device)
 
 ```
-VBoxManage showvminfo "VM_NAME" | grep "IDE"
+VBoxManage showvminfo "CentOS-Docker" | grep "IDE"
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;If you didn't find it, you can add it:
 
 ```
-VBoxManage storagectl "VM_NAME" --name "IDE controller" --add ide
+VBoxManage storagectl "CentOS-Docker" --name "IDE" --add ide
 ```
 
 To attach the VBoxGuestAdditions.iso as dvd drive:
 
+Assuming:
+* **Storage controller name** is `IDE`.
+* **Storage controller port** is `1`.
+* **Storage controller device** is `0`.
+* **VBoxGuestAdditions.iso location** is `/usr/share/virtualbox/VBoxGuestAdditions.iso`.
+
 ```
-VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium /PATH/TO/VBoxGuestAdditions.iso
+VBoxManage storageattach "CentOS-Docker" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium /usr/share/virtualbox/VBoxGuestAdditions.iso
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;To find out where is VBoxGuestAdditions.iso:
@@ -52,19 +63,19 @@ find / -path /mnt -prune -o -name 'VBoxGuestAdditions*.iso'
 &nbsp;&nbsp;&nbsp;&nbsp;If you have the virtualbox-guestadditions packages installed on your host, then you can alternatively try:
 
 ```
-VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium additions
+VBoxManage storageattach "CentOS-Docker" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium additions
 ```
 
 To detach the VBoxGuestAdditions.iso:
 
 ```
-VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive
+VBoxManage storageattach "CentOS-Docker" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive
 ```
 
 &nbsp;&nbsp;&nbsp;&nbsp;If that didn't work, just force it:
 
 ```
-VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive --forceunmount
+VBoxManage storageattach "CentOS-Docker" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive --forceunmount
 ```
 
 ### On Guest:
@@ -109,7 +120,6 @@ When we're done, let's unmount it:
 
 ```
 umount /media/cdrom0
-
 ```
 
 Then remove the attached ISO from host.
@@ -120,10 +130,18 @@ Finally, just reboot:
 rebooot
 ```
 
-2. Modify `/etc/fstab` and add the following (with modifications based on your needs):
+2. Tell the guest-os about our shared folder:
+
+Assuming:
+* The **shared folder** called `Media-Data`.
+* The **MOUNTPOINT** in the guest-os is `/mnt/Media`.
+* The **UserID** is `1000`.
+* We want the read and write permissions.
+
+Modify `/etc/fstab` and add the following:
 
 ```
-NAME_OF_SHARED_FOLDER       /PATH/TO/MOUNTPOINT     vboxsf  uid=1000,rw      0       0
+Media-Data      /mnt/Media      vboxsf  uid=1000,rw      0       0
 ```
 
 ## Macvlan Network:
