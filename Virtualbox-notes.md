@@ -35,7 +35,7 @@ VBoxManage showvminfo "VM_NAME" | grep "IDE"
 
 &nbsp;&nbsp;&nbsp;&nbsp;```
 VBoxManage storagectl "VM_NAME" --name "IDE controller" --add ide
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 
 To attach the VBoxGuestAdditions.iso as dvd drive:
 
@@ -47,13 +47,13 @@ VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type
 
 &nbsp;&nbsp;&nbsp;&nbsp;```
 find / -path /mnt -prune -o -name 'VBoxGuestAdditions*.iso'
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 
 &nbsp;&nbsp;&nbsp;&nbsp;If you have the virtualbox-guestadditions packages installed on your host, then you can alternatively try:
 
 &nbsp;&nbsp;&nbsp;&nbsp;```
 VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium additions
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 
 To detach the VBoxGuestAdditions.iso:
 
@@ -65,7 +65,7 @@ VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type
 
 &nbsp;&nbsp;&nbsp;&nbsp;```
 VBoxManage storageattach "VM_NAME" --storagectl "IDE" --port 1 --device 0 --type dvddrive --medium emptydrive --forceunmount
-&nbsp;&nbsp;&nbsp;&nbsp;```
+```
 
 ### On Guest:
 
