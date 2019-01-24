@@ -4,12 +4,12 @@
 
 function init_install() {
     yum -y update
-    yum -y install vim tmux git rsync
+    yum -y "${AL_SYSADMIN_ENVIRONMENT_PKGS[@]}"
 }
 
 function init_remove() {
     yum -y update
-    yum -y remove vim tmux git rsync
+    yum -y remove "${AL_SYSADMIN_ENVIRONMENT_PKGS[@]}"
 }
 
 function init_purge() {
