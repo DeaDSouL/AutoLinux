@@ -12,14 +12,13 @@ function init_install() {
     # ----------------------------------------------------------------
     yum -y install docker-ce
     # ----------------------------------------------------------------
-    [[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
-    [[ ! -e "${AL_CONFIG_PATH}" ]] && mkdir "${AL_CONFIG_PATH}"
+    [[ ! -e "${AL_PATH_CONFIG}" ]] && mkdir "${AL_PATH_CONFIG}"
     [[ -e "${AL_DOCKER_ALIAS}" ]] && mv "${AL_DOCKER_ALIAS}" "${AL_DOCKER_ALIAS}.${AL_DATETIME}"
     # ----------------------------------------------------------------
     echo -e "alias d.stat='docker stats'" > "${AL_DOCKER_ALIAS}"
-    echo -e "\n[[ -e '${AL_DOCKER_ALIAS}' ]] && . '${AL_DOCKER_ALIAS}'\n" >> "${AL_BASHRC}"
+    echo -e "\n[[ -e '${AL_DOCKER_ALIAS}' ]] && . '${AL_DOCKER_ALIAS}'\n" >> "${AL_PATH_BASHRC}"
     # ----------------------------------------------------------------
-    . "${AL_BASHRC}"
+    . "${AL_PATH_BASHRC}"
     # ----------------------------------------------------------------
     systemctl enable docker
     systemctl start docker
@@ -33,20 +32,20 @@ function init_remove() {
     yum -y autoremove
     # ----------------------------------------------------------------
     grepString="\[\[ -e '${AL_DOCKER_ALIAS}' \]\] \&\& \. '${AL_DOCKER_ALIAS}'"
-    $(grep "${grepString}" "${AL_BASHRC}" >/dev/null)
+    $(grep "${grepString}" "${AL_PATH_BASHRC}" >/dev/null)
     # ----------------------------------------------------------------
     if [[ $? == 0 ]]; then
         sedString="${grepString//\//\/}"
-        sed -i "/${sedString}/d" "${AL_BASHRC}"
+        sed -i "/${sedString}/d" "${AL_PATH_BASHRC}"
     fi
     # ----------------------------------------------------------------
-    . "${AL_BASHRC}"
+    . "${AL_PATH_BASHRC}"
 }
 
 function init_purge() {
     init_remove "$1"
     # ----------------------------------------------------------------
-    dPaths=(AL_DOCKER_SYS_PATH AL_DOCKER_ENG_PATH AL_DOCKER_ALIAS AL_DOCKER_VOLUMES_PATH AL_DOCKER_CONTAINERS_PATH AL_DOCKER_PATH)
+    dPaths=(AL_DOCKER_SYS_PATH AL_DOCKER_ENG_PATH AL_DOCKER_ALIAS AL_DOCKER_PATH)
     for ddir in ${dPaths[@]}; do
         [[ -e "${!ddir}" ]] && rm -rfv "${!ddir}"
     done
