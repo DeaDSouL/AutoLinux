@@ -116,6 +116,8 @@ cd /media/cdrom0
 ./VBoxLinuxAdditions.run
 ```
 
+&nbsp;&nbsp;&nbsp;&nbsp;If you're installing it on a server without GUI, add this flag: `--nox11`.
+
 When we're done, let's unmount it:
 
 ```
