@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 DIRSRC='/usr/local/src'
-ALS=('al.sysadmin-env' 'al.vim-env' 'al.docker' 'al.docker-network' 'al.docker-emby')
+ALS=('al.sysadmin-env' 'al.vim-env' 'al.docker')
 
 cd "${DIRSRC}"
 
