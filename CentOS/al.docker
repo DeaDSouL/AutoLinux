@@ -2,6 +2,53 @@
 
 . al.config
 
+MY_BASHRC="${HOME}/.bashrc"
+OLDIF="$IF"
+IF='' read -r -d '' DALIASES<<'EOC'
+# show docker's statistics
+alias d.stat='docker stats'
+
+# print the PID of the CONTAINER
+d.pid() { docker inspect --format '{{ .State.Pid }}' "$@"; }
+
+# print the IP of the CONTAINER
+d.ip() {
+    nw=$(docker inspect --format '{{ .HostConfig.NetworkMode }}' "$@")
+    [[ $nw == 'default' ]] && nw='bridge'
+    docker inspect --format "{{ .NetworkSettings.Networks.${nw}.IPAddress }}" "$@"
+}
+
+# print the attached volumes to a CONTAINER
+d.vols() {
+    vols=$(docker inspect --format '{{ .HostConfig.Binds }}' "$@")
+    if [[ ${#vols} -gt 2 ]]; then
+        echo ''
+        for vol in ${vols:1:-1}; do
+            echo "${vol}"
+        done
+        echo ''
+    fi
+}
+
+# generate unique MAC-ADDRESS based on given word/phrase
+d.gen-mac() {
+    echo $1|md5sum|sed 's/^\(..\)\(..\)\(..\)\(..\)\(..\).*$/02:\1:\2:\3:\4:\5/'
+}
+
+# print host Gateway
+d.nw-gw() { ip route | grep -m1 default | awk '{ print $3}'; }
+
+# print host Subnet
+d.nw-sn() {
+    IP_IFACE=$(ip route | grep -m1 default | awk '{ print $5}')
+    OUR_ADDRESS=$(ip addr | grep -A1 $IP_IFACE | grep "inet " | awk '{print $2}' | awk -F "/" '{print $1}')
+    ip route | grep -m1 $OUR_ADDRESS | awk '{print $1}'
+}
+
+EOC
+IF="$OLDIF"
+
+
 # based on: https://docs.docker.com/install/linux/docker-ce/centos/
 function init_install() {
     yum -y update
@@ -13,12 +60,16 @@ function init_install() {
     yum -y install docker-ce
     # ----------------------------------------------------------------
     [[ ! -e "${AL_PATH_CONFIG}" ]] && mkdir "${AL_PATH_CONFIG}"
+    [[ ! -e "${AL_PATH_BIN}" ]] && mkdir "${AL_PATH_BIN}"
     [[ -e "${AL_DOCKER_ALIAS}" ]] && mv "${AL_DOCKER_ALIAS}" "${AL_DOCKER_ALIAS}.${AL_DATETIME}"
     # ----------------------------------------------------------------
-    echo -e "alias d.stat='docker stats'" > "${AL_DOCKER_ALIAS}"
-    echo -e "\n[[ -e '${AL_DOCKER_ALIAS}' ]] && . '${AL_DOCKER_ALIAS}'\n" >> "${AL_PATH_BASHRC}"
+    echo "${DALIASES}" > "${AL_DOCKER_ALIAS}"
     # ----------------------------------------------------------------
-    . "${AL_PATH_BASHRC}"
+    grepString="\[\[ -e '${AL_DOCKER_ALIAS}' \]\] \&\& \. '${AL_DOCKER_ALIAS}'"
+    $(grep "${grepString}" "${MY_BASHRC}" >/dev/null)
+    [[ $? != 0 ]] && echo -e "\n[[ -e '${AL_DOCKER_ALIAS}' ]] && . '${AL_DOCKER_ALIAS}'\n" >> "${MY_BASHRC}"
+    # ----------------------------------------------------------------
+    . "${MY_BASHRC}"
     # ----------------------------------------------------------------
     systemctl enable docker
     systemctl start docker
@@ -32,20 +83,20 @@ function init_remove() {
     yum -y autoremove
     # ----------------------------------------------------------------
     grepString="\[\[ -e '${AL_DOCKER_ALIAS}' \]\] \&\& \. '${AL_DOCKER_ALIAS}'"
-    $(grep "${grepString}" "${AL_PATH_BASHRC}" >/dev/null)
+    $(grep "${grepString}" "${MY_BASHRC}" >/dev/null)
     # ----------------------------------------------------------------
     if [[ $? == 0 ]]; then
         sedString="${grepString//\//\/}"
-        sed -i "/${sedString}/d" "${AL_PATH_BASHRC}"
+        sed -i "/${sedString}/d" "${MY_BASHRC}"
     fi
     # ----------------------------------------------------------------
-    . "${AL_PATH_BASHRC}"
+    . "${MY_BASHRC}"
 }
 
 function init_purge() {
     init_remove "$1"
     # ----------------------------------------------------------------
-    dPaths=(AL_DOCKER_SYS_PATH AL_DOCKER_ENG_PATH AL_DOCKER_ALIAS AL_DOCKER_PATH)
+    dPaths=(AL_DOCKER_PATH_SYS AL_DOCKER_PATH_ENG AL_DOCKER_ALIAS AL_DOCKER_PATH)
     for ddir in ${dPaths[@]}; do
         [[ -e "${!ddir}" ]] && rm -rfv "${!ddir}"
     done

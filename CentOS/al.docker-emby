@@ -2,19 +2,47 @@
 
 . al.config
 
-[[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
+function _getScriptContents() {
+scriptContents="#!/bin/env bash
+
+docker ps -a | grep \"${AL_DOCKER_EMBY_REPO_VER}.*${AL_DOCKER_EMBY_NAME}$\" >/dev/null
+# ----------------------------------------------------------------
+if [[ \$? == 0 ]]; then
+    echo \"[ERROR]: container:${AL_DOCKER_EMBY_NAME} is already installed!\"
+    exit 1
+fi
+# ----------------------------------------------------------------
+docker pull ${AL_DOCKER_EMBY_REPO_VER}
+# ----------------------------------------------------------------
+docker run -d \\
+    --network ${AL_DOCKER_EMBY_NETWORK} \\
+    --ip ${AL_DOCKER_EMBY_IP} \\
+    --hostname \"${AL_DOCKER_EMBY_HOSTNAME}\" \\
+    --mac-address \"${AL_DOCKER_EMBY_MAC}\" \\
+    ${1}\\
+    --publish 8096:8096 \\
+    --publish 8920:8920 \\
+    --env UID=${AL_DOCKER_EMBY_UID} \\
+    --env GID=${AL_DOCKER_EMBY_GID} \\
+    --env GIDLIST=${AL_DOCKER_EMBY_GIDLIST} \\
+    --restart ${AL_DOCKER_EMBY_RESTART} \\
+    --name ${AL_DOCKER_EMBY_NAME} \\
+    ${AL_DOCKER_EMBY_OPTIONS[@]} ${AL_DOCKER_EMBY_REPO_VER} sh
+"
+    echo "${scriptContents}"
+}
 
 function init_install() {
-    docker ps -a | grep "emby/embyserver:latest.*${AL_DOCKER_EMBY_NAME}$" >/dev/null
+    docker ps -a | grep "${AL_DOCKER_EMBY_REPO_VER}.*${AL_DOCKER_EMBY_NAME}$" >/dev/null
     if [[ $? == 0 ]]; then
-        echo "[ERROR]: container:emby is already installed!"
+        echo "[ERROR]: container:${AL_DOCKER_EMBY_NAME} is already installed!"
         exit 1
     fi
     # ----------------------------------------------------------------
-    if [[ ! -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]]; then
-        mkdir -p "${AL_DOCKER_EMBY_CONFIG_PATH}"
-        chown -R 1000:1000 "${AL_DOCKER_EMBY_CONFIG_PATH}"
-    fi
+    eVolumes=''
+    for eVol in "${AL_DOCKER_EMBY_VOLUMES[@]}"; do
+        [[ ! -z "${eVol}" ]] && eVolumes="${eVolumes}--volume ${eVol} "
+    done
     # ----------------------------------------------------------------
     docker pull ${AL_DOCKER_EMBY_REPO_VER}
     # ----------------------------------------------------------------
@@ -36,8 +64,7 @@ function init_install() {
         --ip ${AL_DOCKER_EMBY_IP} \
         --hostname "${AL_DOCKER_EMBY_HOSTNAME}" \
         --mac-address "${AL_DOCKER_EMBY_MAC}" \
-        --volume ${AL_DOCKER_EMBY_CONFIG_PATH}:/config \
-        --volume ${AL_DOCKER_EMBY_VOLUME1} \
+        ${eVolumes}\
         --publish 8096:8096 \
         --publish 8920:8920 \
         --env UID=${AL_DOCKER_EMBY_UID} \
@@ -48,6 +75,12 @@ function init_install() {
         ${AL_DOCKER_EMBY_OPTIONS[@]} ${AL_DOCKER_EMBY_REPO_VER} sh
     # ----------------------------------------------------------------
     docker ps -a
+    # ----------------------------------------------------------------
+    scriptFile="${AL_PATH_BIN}/run.${AL_DOCKER_EMBY_NAME}"
+    _getScriptContents "${eVolumes}" > "${scriptFile}"
+    chmod u+x "${scriptFile}"
+    ln -s "${scriptFile}" /usr/local/sbin/
+    echo -e "Generated a 'docker run' file in:\n\t${scriptFile}"
 }
 
 function init_remove() {
@@ -59,7 +92,8 @@ function init_purge() {
     init_remove
     # ----------------------------------------------------------------
     docker rmi ${AL_DOCKER_EMBY_REPO_VER}
-    [[ -e "${AL_DOCKER_EMBY_CONFIG_PATH}" ]] && rm -rf "${AL_DOCKER_EMBY_CONFIG_PATH}"
+    # @TODO: Should we really delete paths of: emby, config, backup, bin ??
+    #   I don't think it's a good idea!
 }
 
 function init_showUsage() {
