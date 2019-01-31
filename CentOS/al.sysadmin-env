@@ -1,10 +1,11 @@
 #!/bin/env bash
 
-. al.config
+ALSCRIPTDIR=$(dirname "$0")
+. "${ALSCRIPTDIR}/al.config"
 
 function init_install() {
     yum -y update
-    yum -y "${AL_SYSADMIN_ENVIRONMENT_PKGS[@]}"
+    yum -y install "${AL_SYSADMIN_ENVIRONMENT_PKGS[@]}"
 }
 
 function init_remove() {

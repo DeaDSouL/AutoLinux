@@ -1,6 +1,7 @@
 #!/bin/env bash
 
-. al.config
+ALSCRIPTDIR=$(dirname "$0")
+. "${ALSCRIPTDIR}/al.config"
 
 function _getScriptContents() {
 scriptContents="#!/bin/env bash
