@@ -22,7 +22,6 @@ It should not rely on anything. Since it focuses on the fresh CentOS installatio
 Although you should have the following packages installed:
 * `rpm`
 * `yum`
-* `git`
 
 ### Installation
 ```
