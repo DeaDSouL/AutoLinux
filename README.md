@@ -25,7 +25,9 @@ Although you should have the following packages installed:
 * `git`
 
 ### Installation
-Just use do: `git clone https://github.com/DeaDSouL/AutoLinux.git`
+```
+curl -s 'https://raw.githubusercontent.com/DeaDSouL/AutoLinux/master/installer-centos.sh' | bash
+```
 
 ### Usage
 `./al.sysadmin-env help`
