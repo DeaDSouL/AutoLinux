@@ -3,8 +3,6 @@
 ALSCRIPTDIR=$(dirname "$0")
 . "${ALSCRIPTDIR}/al.config"
 
-[[ ! -e "${AL_DOCKER_VOLUMES_PATH}" ]] && mkdir -p "${AL_DOCKER_VOLUMES_PATH}"
-
 function init_install() {
     docker network inspect "${AL_DOCKER_NETWORK_NAME}" &>/dev/null
     if [[ $? == 0 ]]; then
