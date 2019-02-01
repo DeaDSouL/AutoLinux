@@ -15,12 +15,11 @@ function init_install() {
     # ----------------------------------------------------------------
     mkdir -p "${HOME}"/.vim/{plugged,files/{bkp,swap,undo}}
     # ----------------------------------------------------------------
-    echo 'Will run vim, now.'; sleep 2
-    echo 'Hit: ,U'; sleep 3
-    echo '     and wait till the pluggins is updated'; sleep 3
-    echo 'Then hit: ,u'; sleep 4
-    # ----------------------------------------------------------------
-    vim
+    echo -e '\nRemember:'
+    echo -e '\t,U:\tTo update vim-plug.'
+    echo -e '\t,u:\tTo update plugins\n'
+    echo -e 'Once you update the plugins, \nyou will have to install the fonts:'
+    echo -e '\t~/.vim/plugged/fonts/./install.sh'
 }
 
 function init_remove() {
