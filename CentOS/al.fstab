@@ -59,6 +59,7 @@ function init_install() {
         echo 'Mounting the added mounts..'
         unset fsmpoint
         for fsmpoint in "${fsmpoints}"; do
+            echo "Mounting ${fsmpoint}"
             mount "${fsmpoint}"
         done
     else
@@ -71,7 +72,7 @@ function init_install() {
 
 function init_remove() {
     # @TODO: if they're being mounted unmount them first then, delete enteries
-    sed "/${PATTERNSTART}/,/${PATTERNEND}/d" "${FSTABFILE}" > "${FSTABFILE}.output"
+    sed "/^${PATTERNSTART}/,/^${PATTERNEND}/d" "${FSTABFILE}" > "${FSTABFILE}.output"
     # ----------------------------------------------------------------
 }
 
