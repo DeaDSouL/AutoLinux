@@ -54,13 +54,16 @@ function init_install() {
         for entery in "${enteries[@]}"; do
             echo "$entery" >> "${FSTABFILE}"
         done
-        echo -e "\n${PATTERNEND}\n" >> "${FSTABFILE}"
+        echo -e "\n${PATTERNEND}" >> "${FSTABFILE}"
         # ----------------------------------------------------------------
         echo 'Mounting the added mounts..'
         unset fsmpoint
         for fsmpoint in "${fsmpoints[@]}"; do
-            echo "Mounting ${fsmpoint}"
-            mount "${fsmpoint}"
+            mountpoint -q "${fsmpoint}" &>/dev/null
+            if [[ $? != 0 ]]; then
+                echo "Mounting ${fsmpoint}"
+                mount "${fsmpoint}"
+            fi
         done
     else
         echo '[ERROR]: Did not find any new mounts to add'
@@ -71,12 +74,24 @@ function init_install() {
 }
 
 function init_remove() {
-    # @TODO: if they're being mounted unmount them first then, delete enteries
-    sed "/^${PATTERNSTART}/,/^${PATTERNEND}/d" "${FSTABFILE}" > "${FSTABFILE}.output"
+    sed "/^${PATTERNSTART}/,/^${PATTERNEND}/d" "${FSTABFILE}" > "${FSTABFILE}.tmp"
+    echo "Backing-up: ${FSTABFILE}"
+    mv -v "${FSTABFILE}" "${FSTABFILE}.bkp-${AL_DATETIME}"
+    echo "Removing the AL_FSTAB mounts..."
+    mv "${FSTABFILE}.tmp" "${FSTABFILE}"
     # ----------------------------------------------------------------
 }
 
 function init_purge() {
+    sedPattern="/^${PATTERNSTART}/,/^${PATTERNEND}/p"
+    for fsmpoint in $(sed -n "${sedPattern}" "${FSTABFILE}" | egrep -v '^#|^$' | awk '{print $2}'); do
+        mountpoint -q "${fsmpoint}" &>/dev/null
+        if [[ $? == 0 ]]; then
+            echo "Un-mounting: ${fsmpoint}"
+            umount "${fsmpoint}"
+        fi
+    done
+    # ----------------------------------------------------------------
     init_remove "$1"
 }
 
@@ -85,7 +100,7 @@ function init_showUsage() {
     help\tShows this menu.
     install\tInstalls the al.fstab mounts.
     remove\tRemoves the al.fstab mounts.
-    purge\tAlias to remove.\n"
+    purge\tUn-mount the al.fstab mounts, then call remove.\n"
 }
 
 function init_main() {
