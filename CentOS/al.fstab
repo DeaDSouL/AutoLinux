@@ -58,7 +58,7 @@ function init_install() {
         # ----------------------------------------------------------------
         echo 'Mounting the added mounts..'
         unset fsmpoint
-        for fsmpoint in "${fsmpoints}"; do
+        for fsmpoint in "${fsmpoints[@]}"; do
             echo "Mounting ${fsmpoint}"
             mount "${fsmpoint}"
         done
