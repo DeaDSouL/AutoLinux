@@ -6,6 +6,7 @@ ALSCRIPTDIR=$(dirname "$0")
 PATTERNSTART='# AL_FSTAB : START'
 PATTERNEND='# AL_FSTAB : END'
 FSTABFILE='/etc/fstab'
+TMPFSTABPURGE='/tmp/tmp.al_fstab_purge'
 
 function init_install() {
     # @TODO: make sure we haven't install al.fstab before we proceed
@@ -83,14 +84,22 @@ function init_remove() {
 }
 
 function init_purge() {
+    sponge() ( tmp=$(mktemp) && cat > "$tmp" && cat -- "$tmp" > "$1" && rm -- "$tmp"; )
+    # ----------------------------------------------------------------
     sedPattern="/^${PATTERNSTART}/,/^${PATTERNEND}/p"
-    for fsmpoint in $(sed -n "${sedPattern}" "${FSTABFILE}" | egrep -v '^#|^$' | awk '{print $2}'); do
+    sed -n "${sedPattern}" "${FSTABFILE}" |egrep -v '^#|^$' |awk '{print $2}' > "${TMPFSTABPURGE}"
+    # ----------------------------------------------------------------
+    tac "${TMPFSTABPURGE}" | sponge "${TMPFSTABPURGE}"
+    # ----------------------------------------------------------------
+    while IFS='' read -r fsmpoint || [[ -n "${fsmpoint}" ]]; do
         mountpoint -q "${fsmpoint}" &>/dev/null
         if [[ $? == 0 ]]; then
             echo "Un-mounting: ${fsmpoint}"
             umount "${fsmpoint}"
         fi
-    done
+    done < "${TMPFSTABPURGE}"
+    # ----------------------------------------------------------------
+    [[ -e "${TMPFSTABPURGE}" ]] && rm -f "${TMPFSTABPURGE}"
     # ----------------------------------------------------------------
     init_remove "$1"
 }
