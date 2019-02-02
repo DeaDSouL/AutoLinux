@@ -130,9 +130,9 @@ function init_purge() {
 function init_showUsage() {
     echo -e "\nUSAGE: $0 help|install|remove|purge\n
     help\tShows this menu.
-    install\tInstalls docker.
-    remove\tRemoves docker.
-    purge\tRemove docker and the created directories & files.\n"
+    install\tInstalls VirtualBox Guest Additions.
+    remove\tRemoves VirtualBox Guest Additions.
+    purge\tAlias to remove.\n"
 }
 
 function init_main() {
