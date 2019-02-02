@@ -41,7 +41,7 @@ function init_install() {
     # ----------------------------------------------------------------
     blkid "${DEVCD}" &>/dev/null
     if [[ $? != 0 ]]; then
-        echo '[ERROR]: CD-Drive is empty!'
+        echo -e '[ERROR]: CD-Drive is empty! \nPlease insert the VirtualBox Guest Additions CD Image.'
         exit 1
     fi
     # ----------------------------------------------------------------
@@ -51,7 +51,13 @@ function init_install() {
         exit 1
     fi
     # ----------------------------------------------------------------
-    "${MOUNTDIR}/./VBoxLinuxAdditions.run" --nox11
+    if [[ -e "${MOUNTDIR}/VBoxLinuxAdditions.run" ]]; then
+        "${MOUNTDIR}/./VBoxLinuxAdditions.run" --nox11
+    else
+        echo '[ERROR]: It is not the VirtualBox Guest Additions CD Image!'
+        umount "${MOUNTDIR}"
+        exit 1
+    fi
     # ----------------------------------------------------------------
     umount "${MOUNTDIR}"
     # ----------------------------------------------------------------
@@ -94,7 +100,7 @@ function init_remove() {
     # ----------------------------------------------------------------
     blkid "${DEVCD}" &>/dev/null
     if [[ $? != 0 ]]; then
-        echo '[ERROR]: CD-Drive is empty!'
+        echo -e '[ERROR]: CD-Drive is empty! \nPlease insert the VirtualBox Guest Additions CD Image.'
         exit 1
     fi
     # ----------------------------------------------------------------
@@ -104,7 +110,13 @@ function init_remove() {
         exit 1
     fi
     # ----------------------------------------------------------------
-    "${MOUNTDIR}/./VBoxLinuxAdditions.run" uninstall
+    if [[ -e "${MOUNTDIR}/VBoxLinuxAdditions.run" ]]; then
+        "${MOUNTDIR}/./VBoxLinuxAdditions.run" uninstall
+    else
+        echo '[ERROR]: It is not the VirtualBox Guest Additions CD Image!'
+        umount "${MOUNTDIR}"
+        exit 1
+    fi
     # ----------------------------------------------------------------
     umount "${MOUNTDIR}"
     # ----------------------------------------------------------------
