@@ -1,0 +1,137 @@
+#!/bin/env bash
+
+ALSCRIPTDIR=$(dirname "$0")
+. "${ALSCRIPTDIR}/al.config"
+
+function init_install() {
+    # @TODO: maybe we need to add a user to vboxsf group?
+        # usermod -a -G vboxsf deadsoul
+    modinfo vboxguest &>/dev/null
+    if [[ $? == 0 ]]; then
+        echo '[ERROR]: VBoxGuestAdditions is already installed!'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    rpm -qa | grep -i 'epel-release-.*.noarch' &>/dev/null
+    if [[ $? != 0 ]]; then
+        rpm -Uvh "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+        yum -y update
+    fi
+    # ----------------------------------------------------------------
+    yum -y install gcc kernel-devel kernel-headers dkms make bzip2 perl
+    # ----------------------------------------------------------------
+    KERN_DIR=/usr/src/kernels/`uname -r`/build
+    export KERN_DIR
+    # ----------------------------------------------------------------
+    i=0
+    while true; do
+        MOUNTDIR="/media/dvd${i}"
+        [[ -e "${MOUNTDIR}" ]] || mkdir -p "${MOUNTDIR}"
+        mountpoint "${MOUNTDIR}" &>/dev/null
+        [[ $? != 0 ]] && break
+        i=$((i+1))
+    done
+    # ----------------------------------------------------------------
+    DEVCD=/dev/cdrom
+    [[ -e "${DEVCD}" ]] || DEVCD=/dev/sr0
+    if [[ ! -e "${DEVCD}" ]]; then
+        echo '[ERROR]: could not find where is the device: CD-ROM'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    blkid "${DEVCD}" &>/dev/null
+    if [[ $? != 0 ]]; then
+        echo '[ERROR]: CD-Drive is empty!'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    mount -t iso9660 -o ro "${DEVCD}" "${MOUNTDIR}" &>/dev/null
+    if [[ $? != 0 ]]; then
+        echo '[ERROR]: Could not mount CD-ROM!'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    "${MOUNTDIR}/./VBoxLinuxAdditions.run" --nox11
+    # ----------------------------------------------------------------
+    umount "${MOUNTDIR}"
+    # ----------------------------------------------------------------
+    echo 'Successfully installed.. Now you should reboot!'
+}
+
+function init_remove() {
+    modinfo vboxguest &>/dev/null
+    if [[ $? != 0 ]]; then
+        echo '[ERROR]: VBoxGuestAdditions is not installed!'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    rpm -qa | grep -i 'epel-release-.*.noarch' &>/dev/null
+    if [[ $? != 0 ]]; then
+        rpm -Uvh "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+        yum -y update
+    fi
+    # ----------------------------------------------------------------
+    yum -y install gcc kernel-devel kernel-headers dkms make bzip2 perl
+    # ----------------------------------------------------------------
+    KERN_DIR=/usr/src/kernels/`uname -r`/build
+    export KERN_DIR
+    # ----------------------------------------------------------------
+    i=0
+    while true; do
+        MOUNTDIR="/media/dvd${i}"
+        [[ -e "${MOUNTDIR}" ]] || mkdir -p "${MOUNTDIR}"
+        mountpoint "${MOUNTDIR}" &>/dev/null
+        [[ $? != 0 ]] && break
+        i=$((i+1))
+    done
+    # ----------------------------------------------------------------
+    DEVCD=/dev/cdrom
+    [[ -e "${DEVCD}" ]] || DEVCD=/dev/sr0
+    if [[ ! -e "${DEVCD}" ]]; then
+        echo '[ERROR]: could not find where is the device: CD-ROM'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    blkid "${DEVCD}" &>/dev/null
+    if [[ $? != 0 ]]; then
+        echo '[ERROR]: CD-Drive is empty!'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    mount -t iso9660 -o ro "${DEVCD}" "${MOUNTDIR}" &>/dev/null
+    if [[ $? != 0 ]]; then
+        echo '[ERROR]: Could not mount CD-ROM!'
+        exit 1
+    fi
+    # ----------------------------------------------------------------
+    "${MOUNTDIR}/./VBoxLinuxAdditions.run" uninstall
+    # ----------------------------------------------------------------
+    umount "${MOUNTDIR}"
+    # ----------------------------------------------------------------
+    echo 'Successfully removed.. Now you should reboot!'
+}
+
+function init_purge() {
+    init_remove "$1"
+}
+
+function init_showUsage() {
+    echo -e "\nUSAGE: $0 help|install|remove|purge\n
+    help\tShows this menu.
+    install\tInstalls docker.
+    remove\tRemoves docker.
+    purge\tRemove docker and the created directories & files.\n"
+}
+
+function init_main() {
+    case "$1" in
+        install)    init_install "$2"               ;;
+        remove)     init_remove "$2"                ;;
+        purge)      init_purge "$2"                 ;;
+        help)       init_showUsage                  ;;
+        *)          echo "[ERROR]: Try: $0 help"    ;;
+    esac
+}
+
+chmod u+x "$0"
+init_main "$1" "$2"
