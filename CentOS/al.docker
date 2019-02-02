@@ -55,6 +55,7 @@ function init_install() {
     yum -y update
     # ----------------------------------------------------------------
     yum -y install "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+    [[ $? != 0 ]] && yum -y install epel-release
     yum -y update
     # ----------------------------------------------------------------
     yum -y install yum-utils device-mapper-persistent-data lvm2 rsync bindfs

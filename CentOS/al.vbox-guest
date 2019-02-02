@@ -74,6 +74,7 @@ function init_remove() {
     rpm -qa | grep -i 'epel-release-.*.noarch' &>/dev/null
     if [[ $? != 0 ]]; then
         rpm -Uvh "https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm"
+        [[ $? != 0 ]] && yum -y install epel-release
         yum -y update
     fi
     # ----------------------------------------------------------------
