@@ -31,7 +31,7 @@ Which contains all the `AutoLinux` used configuration.
 *Info:*
 Manages your needed packages.
 
-*Configuration:*
+**Configuration:**
 * `AL_SYSADMIN_ENVIRONMENT_PKGS` : Is a BASH array variable, that holds all the packages you'd like to have.
 *Command options:*
 * `./al.systemadmin-env help` : Prints the help menu.
