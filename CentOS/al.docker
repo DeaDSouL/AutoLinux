@@ -102,7 +102,7 @@ function init_remove() {
 function init_purge() {
     init_remove "$1"
     # ----------------------------------------------------------------
-    dPaths=(AL_DOCKER_PATH_SYS AL_DOCKER_PATH_ENG AL_DOCKER_ALIAS AL_DOCKER_PATH)
+    dPaths=(AL_DOCKER_PATH_SYS AL_DOCKER_PATH_ENG AL_DOCKER_ALIAS)
     for ddir in ${dPaths[@]}; do
         [[ -e "${!ddir}" ]] && rm -rfv "${!ddir}"
     done
