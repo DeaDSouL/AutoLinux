@@ -1,5 +1,5 @@
 # AutoLinux
-I found myself keep on doing over and over to all the new servers installation as part of their configuration, specially to virtual machines with dockers. That's where the idea of `AutoLinux` came from. As it should take care of all the common server's configuration that I usually do. It works and acts based on the pre-set values in its config file: `CentOS/al.config`.
+I found myself keep on doing same things over and over to all the new servers installation as part of their configuration, specially to virtual machines with dockers. That's where the idea of `AutoLinux` came from. As it should take care of all the common server's configuration that I usually do. It works and acts based on the pre-set values in its config file: `CentOS/al.config`.
 
 ### Installation
 ```
@@ -37,6 +37,7 @@ Manages your needed packages.
 
 **Configuration:**
 * `AL_SYSADMIN_ENVIRONMENT_PKGS` : Is a BASH array variable, that holds all the packages you'd like to have.
+
 **Command options:**
 * `./al.systemadmin-env help` : Prints the help menu.
 * `./al.systemadmin-env install` : Installs the pre-defined packages.
