@@ -64,6 +64,7 @@ function init_install() {
     yum -y update
     # ----------------------------------------------------------------
     yum -y install docker-ce
+    yum -y install docker-compose
     # ----------------------------------------------------------------
     [[ ! -e "${AL_PATH_CONFIG}" ]] && mkdir "${AL_PATH_CONFIG}"
     [[ ! -e "${AL_PATH_BIN}" ]] && mkdir "${AL_PATH_BIN}"
