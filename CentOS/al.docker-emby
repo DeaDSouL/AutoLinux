@@ -22,8 +22,8 @@ docker run -d \\
     --mac-address \"${AL_DOCKER_EMBY_MAC}\" \\
     ${1}\\
     --device /dev/dri/renderD128 \\
-    --publish 8096:8096 \\
-    --publish 8920:8920 \\
+    --publish ${AL_DOCKER_EMBY_IP}:8096:8096 \\
+    --publish ${AL_DOCKER_EMBY_IP}:8920:8920 \\
     --env UID=${AL_DOCKER_EMBY_UID} \\
     --env GID=${AL_DOCKER_EMBY_GID} \\
     --env GIDLIST=${AL_DOCKER_EMBY_GIDLIST} \\
@@ -68,8 +68,8 @@ function init_install() {
         --mac-address "${AL_DOCKER_EMBY_MAC}" \
         ${eVolumes}\
         --device /dev/dri/renderD128 \
-        --publish 8096:8096 \
-        --publish 8920:8920 \
+        --publish ${AL_DOCKER_EMBY_IP}:8096:8096 \
+        --publish ${AL_DOCKER_EMBY_IP}:8920:8920 \
         --env UID=${AL_DOCKER_EMBY_UID} \
         --env GID=${AL_DOCKER_EMBY_GID} \
         --env GIDLIST=${AL_DOCKER_EMBY_GIDLIST} \
