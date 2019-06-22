@@ -21,6 +21,7 @@ docker run -d \\
     --hostname \"${AL_DOCKER_EMBY_HOSTNAME}\" \\
     --mac-address \"${AL_DOCKER_EMBY_MAC}\" \\
     ${1}\\
+    --device /dev/dri/renderD128 \\
     --publish 8096:8096 \\
     --publish 8920:8920 \\
     --env UID=${AL_DOCKER_EMBY_UID} \\
@@ -66,6 +67,7 @@ function init_install() {
         --hostname "${AL_DOCKER_EMBY_HOSTNAME}" \
         --mac-address "${AL_DOCKER_EMBY_MAC}" \
         ${eVolumes}\
+        --device /dev/dri/renderD128 \
         --publish 8096:8096 \
         --publish 8920:8920 \
         --env UID=${AL_DOCKER_EMBY_UID} \
