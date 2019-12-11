@@ -1,5 +1,5 @@
 # AutoLinux
-I found myself keep on doing same things over and over to all the new servers installation as part of their configuration, specially to virtual machines with dockers. That's where the idea of `AutoLinux` came from. As it should take care of all the common server's configuration that I usually do. It works and acts based on the pre-set values in its config file: `CentOS/al.config`.
+I found myself keep on doing same things over and over to all the new servers installation as part of their configuration, specially to virtual machines with dockers. That's where the idea of `AutoLinux` came from. As it should take care of all the common server's configuration that I usually do. It works and acts based on the pre-set values in its config file: `CentOS-7/al.config`.
 
 ### Installation
 ```
@@ -7,7 +7,7 @@ curl -s 'https://raw.githubusercontent.com/DeaDSouL/AutoLinux/master/installer-c
 ```
 
 ### Dependencies
-It should not rely on anything. Since it focuses on the fresh CentOS installation.
+It should not rely on anything. Since it focuses on the fresh CentOS-7 installation.
 Although you should have the following packages installed:
 * `rpm`
 * `yum`
@@ -26,11 +26,11 @@ An installer for `AutoLinux` scripts on CentOS 7. Which will install the followi
 * `AutoLinux/al.docker`.
 
 
-#### CentOS/al.config
+#### CentOS-7/al.config
 Which contains all the `AutoLinux` used configuration.
 
 
-#### CentOS/al.sysadmin-env
+#### CentOS-7/al.sysadmin-env
 
 **Info:**
 Manages your needed packages.
@@ -48,7 +48,7 @@ Manages your needed packages.
 None.
 
 
-#### CentOS/al.vim-env
+#### CentOS-7/al.vim-env
 
 **Info:**
 Manages [DeaDSouL/vimConfig](https://github.com/DeaDSouL/vimConfig) git repository.
@@ -63,10 +63,10 @@ Manages [DeaDSouL/vimConfig](https://github.com/DeaDSouL/vimConfig) git reposito
 * `./al.vim-env purge` : Calls `remove`, then remove the cloned `vimConfig`.
 
 **Dependencies:**
-* `CentOS/al.sysadmin-env` should be installed, or manually install `vim` and `git`.
+* `CentOS-7/al.sysadmin-env` should be installed, or manually install `vim` and `git`.
 
 
-#### CentOS/al.docker
+#### CentOS-7/al.docker
 
 **Info:**
 Manages the installation of Docker.
@@ -87,7 +87,7 @@ Manages the installation of Docker.
 None.
 
 **Docker's helper aliases:**
-Once `CentOS/al.docker` is installed, the following aliases will be ready to be called in terminal.
+Once `CentOS-7/al.docker` is installed, the following aliases will be ready to be called in terminal.
 * `d.stat` : Shows the docker's statistics.
 * `d.pid` : Prints the PID of a given container. (Ex: `d.pid emby0`).
 * `d.ip` : Prints the IP-Address a given container. (Ex: `d.ip emby0`).
@@ -97,7 +97,7 @@ Once `CentOS/al.docker` is installed, the following aliases will be ready to be 
 * `d.nw-sn` : Prints the Subnet. (Ex: `d.nw-sn`).
 
 
-#### CentOS/al.docker-network
+#### CentOS-7/al.docker-network
 
 **Info:**
 Manages your Docker networks.
@@ -117,10 +117,10 @@ Manages your Docker networks.
 * `./al.docker-network purge` : Disconnect any connected container to this network, then removes the network.
 
 **Dependencies:**
-* `CentOS/al.vbox-guest` should be installed, or manually install `VBoxLinuxAddition.run`.
+* `CentOS-7/al.vbox-guest` should be installed, or manually install `VBoxLinuxAddition.run`.
 
 
-#### CentOS/al.docker-emby
+#### CentOS-7/al.docker-emby
 
 **Info:**
 Manages emby/embyserver docker image.
@@ -146,11 +146,11 @@ Manages emby/embyserver docker image.
 * `./al.docker-emby purge` : Calls `remove`, then removes the emby image.
 
 **Dependencies:**
-* `CentOS/al.docker` should be installed, or manually install `docker`.
-* `CentOS/al.vbox-guest` should be installed, or manually install `VBoxLinuxAddition.run`.
+* `CentOS-7/al.docker` should be installed, or manually install `docker`.
+* `CentOS-7/al.vbox-guest` should be installed, or manually install `VBoxLinuxAddition.run`.
 
 
-#### CentOS/al.vbox-guest
+#### CentOS-7/al.vbox-guest
 
 **Info:**
 Manages the VirtualBox Guest Additions.
@@ -168,7 +168,7 @@ None.
 The VirtualBox Guest Additions CD Image should be inserted.
 
 
-#### CentOS/al.fstab
+#### CentOS-7/al.fstab
 
 **Info:**
 Manages your custom mounts in `/etc/fstab`.
@@ -184,7 +184,7 @@ Once, it's been installed and you need to add/remove more custom mounts, you'd h
 * `./al.fstab purge` : Un-mount all the custom added mounts, then calls `remove`.
 
 **Dependencies:**
-Depends of the mount-type you're going to use. if it was `vboxsf` then you'll need `CentOS/al.vbox-guest` or `VBoxLinuxAddition.run` to be installed.. etc.
+Depends of the mount-type you're going to use. if it was `vboxsf` then you'll need `CentOS-7/al.vbox-guest` or `VBoxLinuxAddition.run` to be installed.. etc.
 
 
 
