@@ -7,7 +7,7 @@ function init_install() {
     [[ ! -e "${AL_GIT_REPOS_PATH}" ]] && mkdir -p "${AL_GIT_REPOS_PATH}"
     # ----------------------------------------------------------------
     cd "${AL_GIT_REPOS_PATH}"
-    git clone https://github.com/DeaDSouL/vimConfig.git
+    git clone https://gitlab.com/DeaDSouL/vimConfig.git
     # ----------------------------------------------------------------
     cd "${HOME}"
     ln -s "${AL_GIT_REPOS_PATH}/vimConfig/vimrc" .vimrc

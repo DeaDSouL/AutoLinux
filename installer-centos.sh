@@ -7,7 +7,7 @@ cd "${DIRSRC}"
 
 yum -y update
 yum -y install git
-git clone https://github.com/DeaDSouL/AutoLinux.git
+git clone https://gitlab.com/DeaDSouL/AutoLinux.git
 
 
 for al in ${ALS[@]}; do

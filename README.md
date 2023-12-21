@@ -7,7 +7,7 @@ I found myself keep on doing same things over and over to all the new servers in
 
 ### Installation
 ```
-curl -s 'https://raw.githubusercontent.com/DeaDSouL/AutoLinux/master/installer-centos.sh' | bash
+curl -s 'https://gitlab.com/DeaDSouL/AutoLinux/-/raw/master/installer-centos.sh' | bash
 ```
 
 ### Dependencies
@@ -55,14 +55,14 @@ None.
 #### CentOS-7/al.vim-env
 
 **Info:**
-Manages [DeaDSouL/vimConfig](https://github.com/DeaDSouL/vimConfig) git repository.
+Manages [DeaDSouL/vimConfig](https://gitlab.com/DeaDSouL/vimConfig) git repository.
 
 **Configuration:**
 * `AL_GIT_REPOS_PATH` : Where would you like to store the cloned repository. 
 
 **Command options:**
 * `./al.vim-env help` : Prints the help menu.
-* `./al.vim-env install` : Clones the [DeaDSouL/vimConfig](https://github.com/DeaDSouL/vimConfig) and make the symlinks (`~/.vimrc` & `~/.vim`).
+* `./al.vim-env install` : Clones the [DeaDSouL/vimConfig](https://gitlab.com/DeaDSouL/vimConfig) and make the symlinks (`~/.vimrc` & `~/.vim`).
 * `./al.vim-env remove` : Removes the symlinks.
 * `./al.vim-env purge` : Calls `remove`, then remove the cloned `vimConfig`.
 
@@ -201,5 +201,5 @@ This program is distributed in the hope that it will be useful, but WITHOUT ANY 
 
 You should have received a copy of the GNU General Public License along with this program.  If not, see [gnu.org/licenses](http://www.gnu.org/licenses/).
 
-Copyright (C) [DeaDSouL](https://github.com/DeaDSouL)
+Copyright (C) [DeaDSouL](https://gitlab.com/DeaDSouL)
 
