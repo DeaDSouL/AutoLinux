@@ -1,3 +1,7 @@
+# IMPORTANT
+The repository has been moved to [GitLab.com/DeaDSouL/AutoLinux](https://gitlab.com/DeaDSouL/AutoLinux).
+
+
 # AutoLinux
 I found myself keep on doing same things over and over to all the new servers installation as part of their configuration, specially to virtual machines with dockers. That's where the idea of `AutoLinux` came from. As it should take care of all the common server's configuration that I usually do. It works and acts based on the pre-set values in its config file: `CentOS-7/al.config`.
 
